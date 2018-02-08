@@ -1,3 +1,5 @@
+//reducer functions generate our apps state
+
 export default function() {
   return [
     {title: 'javascript'},
