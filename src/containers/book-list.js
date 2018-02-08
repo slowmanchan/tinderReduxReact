@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 // glue between react and redux (react-redux)
 import { connect } from 'react-redux';
+import { selectBook } from '../actions/index';
+// this will will bind actions to reducers
+import { bindActionCreators } from 'redux';
 // container component (class vs plain pure function)
 // each container should contain logic (smart component)(direct connection to redux)
 // each container should care about a piece slice of state
@@ -10,7 +13,13 @@ class BookList extends Component {
   renderList() {
     return this.props.books.map((book) => {
       return (
-        <li key={book.title} className='list-group-item'>{book.title}</li>
+        <li
+          key={book.title}
+          onClick={() => this.props.selectBook(book)}
+          className='list-group-item'
+        >
+          {book.title}
+        </li>
       )
     })
   }
@@ -32,7 +41,16 @@ function mapStateToProps(state) {
     books: state.books
   }
 }
+
+// anything returned from this func will end up as props on
+// BookList container
+function mapDispatchToProps(dispatch) {
+  // Whenever selectBook is called, the result is passed to all reducers
+  return bindActionCreators({ selectBook: selectBook }, dispatch)
+}
 // BookList in this case will have the books state as props.
 // we connected the apps state.books to books key, returned it as an object
 // BookList container now can call this.props.books
-export default connect(mapStateToProps)(BookList);
+// Promote BookList from a comp to a container - it needs to know about
+// this dispatch method, selectBook.  Make it avail as a prop.
+export default connect(mapStateToProps, mapDispatchToProps)(BookList);
